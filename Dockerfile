@@ -29,33 +29,37 @@ LABEL \
     org.label-schema.vcs-type="Git" \
     org.label-schema.vcs-url="https://github.com/k8s-for-greeks/docker-cassandra-k8s"
 
-ENV CASSANDRA_HOME=/usr/local/apache-cassandra-${CASSANDRA_VERSION} \
+ENV \
     CASSANDRA_CONF=/etc/cassandra \
     CASSANDRA_DATA=/cassandra_data \
     CASSANDRA_LOGS=/var/log/cassandra \
+    CASSANDRA_RELEASE=3.9 \
     JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 \
-    PATH=${PATH}:/usr/lib/jvm/java-8-openjdk-amd64/bin:/usr/local/apache-cassandra-${CASSANDRA_VERSION}/bin  \
     DI_VERSION=1.2.0 \
     DI_SHA=81231da1cd074fdc81af62789fead8641ef3f24b6b07366a1c34e5b059faf363
 
-ADD files /
+COPY files /
 
-RUN set -e && echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections \
-  && apt-get update && apt-get -qq -y --force-yes install --no-install-recommends \
+RUN \
+    set -ex \ 
+    && echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections \
+    && export CASSANDRA_VERSION=${CASSANDRA_VERSION:-$CASSANDRA_RELEASE} \
+    && export CASSANDRA_HOME=/usr/local/apache-cassandra-${CASSANDRA_VERSION} \
+    && apt-get update && apt-get -qq -y --force-yes install --no-install-recommends \
 	openjdk-8-jre-headless \
 	libjemalloc1 \
 	localepurge \
-	wget && \
-  mirror_url=$( wget -q -O - http://www.apache.org/dyn/closer.cgi/cassandra/ \
+	wget \
+    && mirror_url=$( wget -q -O - http://www.apache.org/dyn/closer.cgi/cassandra \
         | sed -n 's#.*href="\(http://ftp.[^"]*\)".*#\1#p' \
         | head -n 1 \
-    ) \
+      ) \
     && wget -q -O - ${mirror_url}/${CASSANDRA_VERSION}/apache-cassandra-${CASSANDRA_VERSION}-bin.tar.gz \
         | tar -xzf - -C /usr/local \
+    && ln -s $CASSANDRA_HOME /usr/local/apache-cassandra \
     && wget -q -O - https://github.com/Yelp/dumb-init/releases/download/v${DI_VERSION}/dumb-init_${DI_VERSION}_amd64 > /sbin/dumb-init \
     && echo "$DI_SHA  /sbin/dumb-init" | sha256sum -c - \
-    && chmod +x /sbin/dumb-init \
-    && chmod +x /ready-probe.sh \
+    && chmod +x /sbin/dumb-init /ready-probe.sh \
     && mkdir -p /cassandra_data/data /etc/cassandra/triggers \
     && mv /logback.xml /cassandra.yaml /jvm.options /etc/cassandra/ \
     && mv /usr/local/apache-cassandra-${CASSANDRA_VERSION}/conf/cassandra-env.sh /etc/cassandra/ \
@@ -117,7 +121,7 @@ RUN set -e && echo 'debconf debconf/frontend select Noninteractive' | debconf-se
         /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/plugin.jar \
 	/usr/lib/jvm/java-8-openjdk-amd64/man
 
-VOLUME ["/$CASSANDRA_DATA"]
+VOLUME ["/cassandra_data"]
 
 # 7000: intra-node communication
 # 7001: TLS intra-node communication
