@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright 2016 The Kubernetes Authors.
+# Copyright 2016 K8s For Greeks / Vorstella
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -170,7 +170,5 @@ fi
 
 chmod 700 "${CASSANDRA_DATA}"
 chown -c -R cassandra "${CASSANDRA_DATA}" "${CASSANDRA_CONF_DIR}"
-
-export CLASSPATH=/kubernetes-cassandra.jar
 
 su cassandra -c "$CASSANDRA_HOME/bin/cassandra -f"

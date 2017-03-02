@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright 2016 The Kubernetes Authors.
+# Copyright 2017 K8S For Greeks / Vorstella
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ if [[ $(nodetool status | grep $POD_IP) == *"UN"* ]]; then
   exit 0;
 else
   if [[ $DEBUG ]]; then
-    echo "UN";
+    echo "Up";
   fi
   exit 1;
 fi

@@ -1,4 +1,4 @@
-# Copyright 2016 The Kubernetes Authors.
+# Copyright 2017 K8s For Greeks / Vorstella
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,27 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# build the cassandra image.
-
-VERSION=v12
-PROJECT_ID=google_samples
-PROJECT=gcr.io/${PROJECT_ID}
+VERSION=v1.0
+PROJECT_ID=vorstella
+PROJECT=quay.io/${PROJECT_ID}
 CASSANDRA_VERSION=3.9
 
 all: build
 
-kubernetes-cassandra.jar: ../java/* ../java/src/main/java/io/k8s/cassandra/*.java
-	cd ../java && mvn clean && mvn package
-	mv ../java/target/kubernetes-cassandra*.jar files/kubernetes-cassandra.jar
-	cd ../java && mvn clean
-
-
 docker: 
 	docker build --pull --build-arg "CASSANDRA_VERSION=${CASSANDRA_VERSION}" -t ${PROJECT}/cassandra:${VERSION} .
 
-build: kubernetes-cassandra.jar docker
+build: docker
 
 push: build
-	gcloud docker -- push ${PROJECT}/cassandra:${VERSION}
+	docker push ${PROJECT}/cassandra:${VERSION}
 
 .PHONY: all build push
