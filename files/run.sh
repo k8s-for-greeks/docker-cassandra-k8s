@@ -169,6 +169,6 @@ if [[ $CASSANDRA_OPEN_JMX == 'true' ]]; then
 fi
 
 chmod 700 "${CASSANDRA_DATA}"
-chown -c -R cassandra "${CASSANDRA_DATA}" "${CASSANDRA_CONF_DIR}"
+chown -c -R cassandra: "${CASSANDRA_DATA}" "${CASSANDRA_CONF_DIR}"
 
 su cassandra -c "$CASSANDRA_HOME/bin/cassandra -f"

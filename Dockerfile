@@ -56,8 +56,7 @@ RUN set -e && echo 'debconf debconf/frontend select Noninteractive' | debconf-se
     && echo "$DI_SHA  /sbin/dumb-init" | sha256sum -c - \
     && chmod +x /sbin/dumb-init \
     && chmod +x /ready-probe.sh \
-    && mkdir -p /cassandra_data/data \
-    && mkdir -p /etc/cassandra \
+    && mkdir -p /cassandra_data/data /etc/cassandra/triggers \
     && mv /logback.xml /cassandra.yaml /jvm.options /etc/cassandra/ \
     && mv /usr/local/apache-cassandra-${CASSANDRA_VERSION}/conf/cassandra-env.sh /etc/cassandra/ \
     && adduser --disabled-password --no-create-home --gecos '' --disabled-login cassandra \
