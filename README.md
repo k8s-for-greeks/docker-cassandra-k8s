@@ -5,8 +5,10 @@ production grade container, and a developer container for using cqlsh.
 
 ## Build Status
 
-This container is hosted on Docker Repository on Quay [![Docker Repository on Quay](https://quay.io/repository/vorstella/cassandra-k8s/status "Docker Repository on Quay")](https://quay.io/repository/vorstella/cassandra-k8s).  Visit the [repository](https://quay.io/repository/vorstella/cassandra-k8s) for the latest tag.  We do not recommend
-running with the lastest tag, as breaking changes may break your production environment.
+[![Docker Repository on Quay](https://quay.io/repository/vorstella/cassandra-k8s/status "Docker Repository on Quay")](https://quay.io/repository/vorstella/cassandra-k8s)
+
+This container is hosted on Docker Repository on Quay.  Visit the [repository](https://quay.io/repository/vorstella/cassandra-k8s?tab=tags) 
+for the most update to date container.  We do not recommend running using "lastest", as breaking changes may break your production environment.
 
 ## Building via Makefile
 
