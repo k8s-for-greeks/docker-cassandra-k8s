@@ -119,6 +119,7 @@ RUN \
         /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/nashorn.jar \
         /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/oblique-fonts \
         /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/plugin.jar \
+        /usr/lib/jvm/java-8-openjdk-amd64/jre/man \
 	/usr/lib/jvm/java-8-openjdk-amd64/man
 
 VOLUME ["/cassandra_data"]

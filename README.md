@@ -1,9 +1,31 @@
-# Docker Cassandra K8s
+# Cassandra K8s
 
-Apache Cassandra docker image based on ubuntu-slim that is optimized to run on Kubernetes.
+This project provides a container optimized to run Apache Cassandra on Kubernetes.  This project provides both a 
+production grade container, and a developer container for using cqlsh.
 
-Note that this image is unstable and under development.
+## Build Status
 
+This container is hosted on Docker Repository on Quay [![Docker Repository on Quay](https://quay.io/repository/vorstella/cassandra-k8s/status "Docker Repository on Quay")](https://quay.io/repository/vorstella/cassandra-k8s).  Visit the [repository](https://quay.io/repository/vorstella/cassandra-k8s) for the latest tag.  We do not recommend
+running with the lastest tag, as breaking changes may break your production environment.
+
+## Building via Makefile
+
+The projects Makefile contains various targets for building and pushing both the production container
+and the development container.
+
+### Production Container
+
+Use the default target. The example below also sets the docker repository name and the Cassandra version.
+See the top of the Makefile for other variables that can be set.
+
+```console
+make CASSANDRA_VERSION=3.9 PROJECT=quay.io/vorstella/cassandra-k8s
 ```
-docker build --build-arg "CASSANDRA_VERSION=3.9" -t local/cassandra .
+
+### Development Container
+
+The following command builds the development container, which includes a working version of `cqlsh`.
+
+```console
+make build-dev
 ```

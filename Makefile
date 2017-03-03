@@ -12,19 +12,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-VERSION=v1.0
-PROJECT_ID=vorstella
-PROJECT=quay.io/${PROJECT_ID}
-CASSANDRA_VERSION=3.9
+VERSION?=v1.2
+PROJECT_ID?=vorstella
+PROJECT?=quay.io/${PROJECT_ID}
+CASSANDRA_VERSION?=3.9
 
 all: build
 
 docker: 
 	docker build --pull --build-arg "CASSANDRA_VERSION=${CASSANDRA_VERSION}" -t ${PROJECT}/cassandra:${VERSION} .
 
+docker-dev: 
+	docker build --pull --build-arg "CASSANDRA_VERSION=${CASSANDRA_VERSION} DEV_CONTAINER=1" -t ${PROJECT}/cassandra:${VERSION}-dev .
+
 build: docker
+
+build-dev: docker-dev
 
 push: build
 	docker push ${PROJECT}/cassandra:${VERSION}
 
-.PHONY: all build push
+push-dev: build-dev
+	docker push ${PROJECT}/cassandra:${VERSION}-dev
+
+push-all: build build-dev push push-dev
+
+.PHONY: all build push docker docker-dev build-dev push push-all
