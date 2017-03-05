@@ -23,7 +23,7 @@ LABEL \
     org.label-schema.build-date=$BUILD_DATE \
     org.label-schema.docker.dockerfile="/Dockerfile" \
     org.label-schema.license="Apache License 2.0" \
-    org.label-schema.name="k8s-for-greeks/docker-cassandra-k8s" \
+    org.label-schema.name="Cassandra container optimized for Kubernetes" \
     org.label-schema.url="https://github.com/k8s-for-greeks/" \
     org.label-schema.vcs-ref=$VCS_REF \
     org.label-schema.vcs-type="Git" \
@@ -33,7 +33,7 @@ ENV \
     CASSANDRA_CONF=/etc/cassandra \
     CASSANDRA_DATA=/cassandra_data \
     CASSANDRA_LOGS=/var/log/cassandra \
-    CASSANDRA_RELEASE=3.9 \
+    CASSANDRA_RELEASE=3.10 \
     JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 \
     DI_VERSION=1.2.0 \
     DI_SHA=81231da1cd074fdc81af62789fead8641ef3f24b6b07366a1c34e5b059faf363
