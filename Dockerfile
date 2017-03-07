@@ -31,12 +31,14 @@ LABEL \
 
 ENV \
     CASSANDRA_CONF=/etc/cassandra \
-    CASSANDRA_DATA=/cassandra_data \
+    CASSANDRA_DATA=/var/lib/cassandra \
     CASSANDRA_LOGS=/var/log/cassandra \
     CASSANDRA_RELEASE=3.10 \
     JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 \
     DI_VERSION=1.2.0 \
-    DI_SHA=81231da1cd074fdc81af62789fead8641ef3f24b6b07366a1c34e5b059faf363
+    DI_SHA=81231da1cd074fdc81af62789fead8641ef3f24b6b07366a1c34e5b059faf363 \
+    JOLOKIA_VERSION=1.3.5 \
+    JOLOKIA_SHA=90907e9d1aa8799252c08cd5ec67d805b2661ad6e773d0de9c8e3d1620b72369
 
 COPY files /
 
@@ -50,6 +52,8 @@ RUN \
 	libjemalloc1 \
 	localepurge \
 	wget \
+    && wget -q -O - "http://search.maven.org/remotecontent?filepath=org/jolokia/jolokia-jvm/${JOLOKIA_VERSION}/jolokia-jvm-${JOLOKIA_VERSION}-agent.jar" > /usr/local/share/jolokia-agent.jar \
+    && echo "$JOLOKIA_SHA  /usr/local/share/jolokia-agent.jar" | sha256sum -c - \
     && mirror_url=$( wget -q -O - http://www.apache.org/dyn/closer.cgi/cassandra \
         | sed -n 's#.*href="\(http://ftp.[^"]*\)".*#\1#p' \
         | head -n 1 \
@@ -60,7 +64,7 @@ RUN \
     && wget -q -O - https://github.com/Yelp/dumb-init/releases/download/v${DI_VERSION}/dumb-init_${DI_VERSION}_amd64 > /sbin/dumb-init \
     && echo "$DI_SHA  /sbin/dumb-init" | sha256sum -c - \
     && chmod +x /sbin/dumb-init /ready-probe.sh \
-    && mkdir -p /cassandra_data/data /etc/cassandra/triggers \
+    && mkdir -p /var/lib/cassandra/ /etc/cassandra/triggers \
     && mv /logback.xml /cassandra.yaml /jvm.options /etc/cassandra/ \
     && mv /usr/local/apache-cassandra-${CASSANDRA_VERSION}/conf/cassandra-env.sh /etc/cassandra/ \
     && adduser --disabled-password --no-create-home --gecos '' --disabled-login cassandra \
@@ -96,12 +100,12 @@ RUN \
         /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/javaws \
         /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/jjs \
         /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/orbd \
-        /usr/lib/jvm/java-8-openjdk-amd64/bin/pack200 \
+        /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/pack200 \
         /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/policytool \
         /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/rmid \
         /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/rmiregistry \
         /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/servertool \
-        /usr/lib/jvm/java-8-openjdk-amd64/bin/tnameserv \
+        /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/tnameserv \
         /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/unpack200 \
         /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/javaws.jar \
         /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/deploy* \
@@ -120,15 +124,19 @@ RUN \
         /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/oblique-fonts \
         /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/plugin.jar \
         /usr/lib/jvm/java-8-openjdk-amd64/jre/man \
-	/usr/lib/jvm/java-8-openjdk-amd64/man
+        /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/images \
+	/usr/lib/jvm/java-8-openjdk-amd64/man \
+	/usr/lib/jvm/java-8-openjdk-amd64/jre/THIRD_PARTY_README \
+	/usr/lib/jvm/java-8-openjdk-amd64/jre/ASSEMBLY_EXCEPTION
 
-VOLUME ["/cassandra_data"]
+VOLUME ["/var/lib/cassandra"]
 
 # 7000: intra-node communication
 # 7001: TLS intra-node communication
 # 7199: JMX
 # 9042: CQL
 # 9160: thrift service
-EXPOSE 7000 7001 7199 9042 9160
+# 8778: jolokia port
+EXPOSE 7000 7001 7199 9042 9160 8778
 
 CMD ["/sbin/dumb-init", "/bin/bash", "/run.sh"]

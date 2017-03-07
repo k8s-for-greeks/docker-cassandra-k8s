@@ -238,3 +238,4 @@
 -XX:+UseGCLogFileRotation
 -XX:NumberOfGCLogFiles=10
 -XX:GCLogFileSize=10M
+-javaagent:/usr/local/share/jolokia-agent.jar=host=0.0.0.0
