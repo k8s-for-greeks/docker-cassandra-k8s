@@ -152,7 +152,7 @@ sed -ri 's/- class_name: SEED_PROVIDER/- class_name: '"$CASSANDRA_SEED_PROVIDER"
 
 # send gc to stdout
 if [[ $CASSANDRA_GC_STDOUT == 'true' ]]; then
-  sed -ri 's/ -Xloggc:\/var\/log\/cassandra\/gc\.log//' $CASSANDRA_CONF_DIR/cassandra-env.sh
+  sed -ri 's/JVM_OPTS.*-Xloggc:.*//' $CASSANDRA_CONF_DIR/cassandra-env.sh
 fi
 
 # enable RMI and JMX to work on one port
