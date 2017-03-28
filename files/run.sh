@@ -44,9 +44,13 @@ CASSANDRA_SEED_PROVIDER="${CASSANDRA_SEED_PROVIDER:-org.apache.cassandra.locator
 CASSANDRA_AUTO_BOOTSTRAP="${CASSANDRA_AUTO_BOOTSTRAP:false}"
 
 # Turn off JMX auth
-CASSANDRA_OPEN_JMX="${CASSANDRA_OPEN_JMX:-false}"
+CASSANDRA_OPEN_JMX="${CASSANDRA_OPEN_JMX:-true}"
+
 # send GC to STDOUT
 CASSANDRA_GC_STDOUT="${CASSANDRA_GC_STDOUT:-false}"
+
+# verbose GC logging
+CASSANDRA_GC_VERBOSE="${CASSANDRA_GC_VERBOSE:-false}"
 
 echo Starting Cassandra on ${CASSANDRA_LISTEN_ADDRESS}
 echo CASSANDRA_CONF_DIR ${CASSANDRA_CONF_DIR}
@@ -63,6 +67,8 @@ echo CASSANDRA_COUNTER_CACHE_SIZE_IN_MB ${CASSANDRA_COUNTER_CACHE_SIZE_IN_MB}
 echo CASSANDRA_DC ${CASSANDRA_DC}
 echo CASSANDRA_DISK_OPTIMIZATION_STRATEGY ${CASSANDRA_DISK_OPTIMIZATION_STRATEGY}
 echo CASSANDRA_ENDPOINT_SNITCH ${CASSANDRA_ENDPOINT_SNITCH}
+echo CASSANDRA_GC_STDOUT ${CASSANDRA_GC_STDOUT}
+echo CASSANDRA_GC_VERBOSE ${CASSANDRA_GC_VERBOSE}
 echo CASSANDRA_GC_WARN_THRESHOLD_IN_MS ${CASSANDRA_GC_WARN_THRESHOLD_IN_MS}
 echo CASSANDRA_INTERNODE_COMPRESSION ${CASSANDRA_INTERNODE_COMPRESSION}
 echo CASSANDRA_KEY_CACHE_SIZE_IN_MB ${CASSANDRA_KEY_CACHE_SIZE_IN_MB}
@@ -73,6 +79,7 @@ echo CASSANDRA_MEMTABLE_CLEANUP_THRESHOLD ${CASSANDRA_MEMTABLE_CLEANUP_THRESHOLD
 echo CASSANDRA_MEMTABLE_FLUSH_WRITERS ${CASSANDRA_MEMTABLE_FLUSH_WRITERS}
 echo CASSANDRA_MIGRATION_WAIT ${CASSANDRA_MIGRATION_WAIT}
 echo CASSANDRA_NUM_TOKENS ${CASSANDRA_NUM_TOKENS}
+echo CASSANDRA_OPEN_JMX ${CASSANDRA_OPEN_JMX}
 echo CASSANDRA_RACK ${CASSANDRA_RACK}
 echo CASSANDRA_RING_DELAY ${CASSANDRA_RING_DELAY}
 echo CASSANDRA_RPC_ADDRESS ${CASSANDRA_RPC_ADDRESS}
@@ -150,13 +157,20 @@ fi
 
 sed -ri 's/- class_name: SEED_PROVIDER/- class_name: '"$CASSANDRA_SEED_PROVIDER"'/' $CASSANDRA_CFG
 
-# send gc to stdout
 if [[ $CASSANDRA_GC_STDOUT == 'true' ]]; then
+  # send gc to stdout
   sed -ri 's/JVM_OPTS.*-Xloggc:.*//' $CASSANDRA_CONF_DIR/cassandra-env.sh
+else
+  mkdir -p "${CASSANDRA_DATA}/log/"
+  echo "-Xloggc:${CASSANDRA_DATA}/log/gc.log" >> $CASSANDRA_CONF_DIR/jvm.options
+  echo "-XX:+UseGCLogFileRotation" >> $CASSANDRA_CONF_DIR/jvm.options
+  echo "-XX:NumberOfGCLogFiles=10" >> $CASSANDRA_CONF_DIR/jvm.options
+  echo "-XX:GCLogFileSize=10M" >> $CASSANDRA_CONF_DIR/jvm.options
 fi
 
-# enable RMI and JMX to work on one port
-echo "JVM_OPTS=\"\$JVM_OPTS -Djava.rmi.server.hostname=$POD_IP\"" >> $CASSANDRA_CONF_DIR/cassandra-env.sh
+if [[ $CASSANDRA_GC_VERBOSE == 'true' ]]; then
+  echo "-XX:PrintFLSStatistics=1" >> $CASSANDRA_CONF_DIR/jvm.options
+fi
 
 # getting WARNING messages with Migration Service
 echo "-Dcassandra.migration_task_wait_in_seconds=${CASSANDRA_MIGRATION_WAIT}" >> $CASSANDRA_CONF_DIR/jvm.options
@@ -166,6 +180,13 @@ if [[ $CASSANDRA_OPEN_JMX == 'true' ]]; then
   export LOCAL_JMX=no
   sed -ri 's/ -Dcom\.sun\.management\.jmxremote\.authenticate=true/ -Dcom\.sun\.management\.jmxremote\.authenticate=false/' $CASSANDRA_CONF_DIR/cassandra-env.sh
   sed -ri 's/ -Dcom\.sun\.management\.jmxremote\.password\.file=\/etc\/cassandra\/jmxremote\.password//' $CASSANDRA_CONF_DIR/cassandra-env.sh
+
+  echo "JVM_OPTS=\"\$JVM_OPTS -Dcom.sun.management.jmxremote\"" >> $CASSANDRA_CONF_DIR/cassandra-env.sh
+  echo "JVM_OPTS=\"\$JVM_OPTS -Dcom.sun.management.jmxremote.ssl=false\"" >> $CASSANDRA_CONF_DIR/cassandra-env.sh
+  echo "JVM_OPTS=\"\$JVM_OPTS -Dcom.sun.management.jmxremote.local.only=false\"" >> $CASSANDRA_CONF_DIR/cassandra-env.sh
+  echo "JVM_OPTS=\"\$JVM_OPTS -Dcom.sun.management.jmxremote.port=7199\"" >> $CASSANDRA_CONF_DIR/cassandra-env.sh
+  echo "JVM_OPTS=\"\$JVM_OPTS -Dcom.sun.management.jmxremote.rmi.port=7199\"" >> $CASSANDRA_CONF_DIR/cassandra-env.sh
+  echo "JVM_OPTS=\"\$JVM_OPTS -Djava.rmi.server.hostname=$POD_IP\"" >> $CASSANDRA_CONF_DIR/cassandra-env.sh
 fi
 
 chmod 700 "${CASSANDRA_DATA}"
