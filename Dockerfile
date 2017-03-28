@@ -42,8 +42,6 @@ ENV \
     PROMETHEUS_VERSION=0.8 \
     PROMETHEUS_SHA=c32440e4a98b441b4ab66a788df77494d32e1560e0f3bb5342752bf064408520
 
-COPY files /
-
 RUN \
     set -ex \
     && echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections \
@@ -67,11 +65,16 @@ RUN \
     && ln -s $CASSANDRA_HOME /usr/local/apache-cassandra \
     && wget -q -O - https://github.com/Yelp/dumb-init/releases/download/v${DI_VERSION}/dumb-init_${DI_VERSION}_amd64 > /sbin/dumb-init \
     && echo "$DI_SHA  /sbin/dumb-init" | sha256sum -c - \
+    && adduser --disabled-password --no-create-home --gecos '' --disabled-login cassandra \
+    && mkdir -p /var/lib/cassandra/ /etc/cassandra/triggers
+
+COPY files /
+
+RUN \
+    set -ex \
     && chmod +x /sbin/dumb-init /ready-probe.sh \
-    && mkdir -p /var/lib/cassandra/ /etc/cassandra/triggers \
     && mv /logback.xml /cassandra.yaml /jvm.options /prometheus.yaml /etc/cassandra/ \
     && mv /usr/local/apache-cassandra-${CASSANDRA_VERSION}/conf/cassandra-env.sh /etc/cassandra/ \
-    && adduser --disabled-password --no-create-home --gecos '' --disabled-login cassandra \
     && chown cassandra: /ready-probe.sh \
     && if [ -n "$DEV_CONTAINER" ]; then apt-get -y --no-install-recommends install python; else rm -rf  $CASSANDRA_HOME/pylib; fi \
     && apt-get -y purge wget localepurge \
