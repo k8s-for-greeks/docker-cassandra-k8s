@@ -12,25 +12,44 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-VERSION?=v1.4
+VERSION?=3.11.0.1
 PROJECT_ID?=vorstella
 PROJECT?=quay.io/${PROJECT_ID}
-CASSANDRA_VERSION?=3.10
+CASSANDRA_VERSION?=3.11.0
+CASSANDRA_HOST_IP?=$(strip $(shell ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p'|tail -n 1|awk '{print $1}'))
 
 all: build
 
-docker: 
-	docker build --pull --build-arg "CASSANDRA_VERSION=${CASSANDRA_VERSION}" -t ${PROJECT}/cassandra:${VERSION} .
+docker:
+	docker build --compress --squash --build-arg "CASSANDRA_VERSION=${CASSANDRA_VERSION}" -t ${PROJECT}/cassandra:${VERSION} .
 
-docker-dev: 
+docker-dev:
 	docker build --pull --build-arg "CASSANDRA_VERSION=${CASSANDRA_VERSION} DEV_CONTAINER=1" -t ${PROJECT}/cassandra:${VERSION}-dev .
+
+docker-cached:
+	docker build --compress --squash --build-arg "CASSANDRA_VERSION=${CASSANDRA_VERSION}" -t ${PROJECT}/cassandra:${VERSION} .
 
 build: docker
 
 build-dev: docker-dev
 
+build-cached: docker-cached
+
 push: build
 	docker push ${PROJECT}/cassandra:${VERSION}
+
+run: build-cached
+	docker run -i -t --rm \
+	-e CASSANDRA_SEEDS='172.17.0.2' \
+	-e CASSANDRA_MEMTABLE_FLUSH_WRITERS=1 \
+	${PROJECT}/cassandra:${VERSION}
+
+shell: build-cached
+	docker run -i -t --rm \
+	-e CASSANDRA_SEEDS='172.17.0.2' \
+	-e CASSANDRA_MEMTABLE_FLUSH_WRITERS=1 \
+	${PROJECT}/cassandra:${VERSION} \
+	/bin/bash
 
 push-dev: build-dev
 	docker push ${PROJECT}/cassandra:${VERSION}-dev

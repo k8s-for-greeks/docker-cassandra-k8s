@@ -86,7 +86,7 @@
 
 # enable assertions.  disabling this in production will give a modest
 # performance benefit (around 5%).
--ea
+#-ea
 
 # enable thread priorities, primarily so we can give periodic tasks
 # a lower priority to avoid interfering with client workload
@@ -221,26 +221,15 @@
 # Otherwise equal to the number of cores when 8 or less.
 # Machines with > 10 cores should try setting these to <= full cores.
 #-XX:ParallelGCThreads=16
+
 # By default, ConcGCThreads is 1/4 of ParallelGCThreads.
 # Setting both to the same value can reduce STW durations.
 #-XX:ConcGCThreads=16
 
-### GC logging options -- uncomment to enable
-
--XX:+PrintGCDetails
--XX:+PrintGCDateStamps
--XX:+PrintHeapAtGC
--XX:+PrintTenuringDistribution
--XX:+PrintGCApplicationStoppedTime
--XX:+PrintPromotionFailure
-#-XX:PrintFLSStatistics=1
-#-Xloggc:/var/log/cassandra/gc.log
-#-XX:+UseGCLogFileRotation
-#-XX:NumberOfGCLogFiles=10
-#-XX:GCLogFileSize=10M
+-Dcassandra.max_queued_native_transport_requests=6144
 
 -javaagent:/usr/local/share/jolokia-agent.jar=host=0.0.0.0
--javaagent:/usr/local/share/prometheus-agent.jar=1234:/etc/cassandra/prometheus.yaml
+-javaagent:/usr/local/share/prometheus-agent.jar=0.0.0.0:1234:/etc/cassandra/prometheus.yaml
 
 # Debug
 -XX:+PrintCommandLineFlags
