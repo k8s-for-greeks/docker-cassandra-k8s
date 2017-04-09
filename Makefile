@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-VERSION?=v1.3
+VERSION?=v1.4
 PROJECT_ID?=vorstella
 PROJECT?=quay.io/${PROJECT_ID}
 CASSANDRA_VERSION?=3.10

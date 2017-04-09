@@ -48,10 +48,10 @@ RUN \
     && export CASSANDRA_VERSION=${CASSANDRA_VERSION:-$CASSANDRA_RELEASE} \
     && export CASSANDRA_HOME=/usr/local/apache-cassandra-${CASSANDRA_VERSION} \
     && apt-get update && apt-get -qq -y --force-yes install --no-install-recommends \
-	openjdk-8-jre-headless \
-	libjemalloc1 \
-	localepurge \
-	wget \
+	    openjdk-8-jre-headless \
+	    libjemalloc1 \
+      localepurge \
+      wget \
     && wget -q -O - "http://search.maven.org/remotecontent?filepath=io/prometheus/jmx/jmx_prometheus_javaagent/${PROMETHEUS_VERSION}/jmx_prometheus_javaagent-${PROMETHEUS_VERSION}.jar" > /usr/local/share/prometheus-agent.jar \
     && echo "$PROMETHEUS_SHA  /usr/local/share/prometheus-agent.jar" | sha256sum -c - \
     && wget -q -O - "http://search.maven.org/remotecontent?filepath=org/jolokia/jolokia-jvm/${JOLOKIA_VERSION}/jolokia-jvm-${JOLOKIA_VERSION}-agent.jar" > /usr/local/share/jolokia-agent.jar \
@@ -66,16 +66,16 @@ RUN \
     && wget -q -O - https://github.com/Yelp/dumb-init/releases/download/v${DI_VERSION}/dumb-init_${DI_VERSION}_amd64 > /sbin/dumb-init \
     && echo "$DI_SHA  /sbin/dumb-init" | sha256sum -c - \
     && adduser --disabled-password --no-create-home --gecos '' --disabled-login cassandra \
-    && mkdir -p /var/lib/cassandra/ /etc/cassandra/triggers
-
-COPY files /
-
-RUN \
-    set -ex \
+    && mkdir -p /var/lib/cassandra/ /etc/cassandra/triggers \
     && chmod +x /sbin/dumb-init /ready-probe.sh \
-    && mv /logback.xml /cassandra.yaml /jvm.options /prometheus.yaml /etc/cassandra/ \
-    && mv /usr/local/apache-cassandra-${CASSANDRA_VERSION}/conf/cassandra-env.sh /etc/cassandra/ \
     && chown cassandra: /ready-probe.sh \
+    && mv \
+      /usr/local/apache-cassandra-${CASSANDRA_VERSION}/conf/cassandra-env.sh \
+      /logback.xml \
+      /cassandra.yaml \
+      /jvm.options \
+      /prometheus.yaml \
+      /etc/cassandra/ \
     && if [ -n "$DEV_CONTAINER" ]; then apt-get -y --no-install-recommends install python; else rm -rf  $CASSANDRA_HOME/pylib; fi \
     && apt-get -y purge wget localepurge \
     && apt-get autoremove \
@@ -87,12 +87,12 @@ RUN \
         $CASSANDRA_HOME/tools/*.yaml \
         $CASSANDRA_HOME/tools/bin/*.bat \
         $CASSANDRA_HOME/bin/*.bat \
-	doc \
-	man \
-	info \
-	locale \
-	common-licenses \
-	~/.bashrc \
+        doc \
+        man \
+        info \
+        locale \
+        common-licenses \
+        ~/.bashrc \
         /var/lib/apt/lists/* \
         /var/log/* \
         /var/cache/debconf/* \
@@ -132,9 +132,9 @@ RUN \
         /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/plugin.jar \
         /usr/lib/jvm/java-8-openjdk-amd64/jre/man \
         /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/images \
-	/usr/lib/jvm/java-8-openjdk-amd64/man \
-	/usr/lib/jvm/java-8-openjdk-amd64/jre/THIRD_PARTY_README \
-	/usr/lib/jvm/java-8-openjdk-amd64/jre/ASSEMBLY_EXCEPTION
+        /usr/lib/jvm/java-8-openjdk-amd64/man \
+        /usr/lib/jvm/java-8-openjdk-amd64/jre/THIRD_PARTY_README \
+        /usr/lib/jvm/java-8-openjdk-amd64/jre/ASSEMBLY_EXCEPTION
 
 VOLUME ["/var/lib/cassandra"]
 
