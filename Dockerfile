@@ -42,6 +42,8 @@ ENV \
     PROMETHEUS_VERSION=0.8 \
     PROMETHEUS_SHA=c32440e4a98b441b4ab66a788df77494d32e1560e0f3bb5342752bf064408520
 
+COPY files /
+
 RUN \
     set -ex \
     && echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections \
