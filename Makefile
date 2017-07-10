@@ -13,7 +13,7 @@
 # limitations under the License.
 
 VERSION?=3.11.0.1
-PROJECT_ID?=vorstella
+PROJECT_ID?=vorstella_oss
 PROJECT?=quay.io/${PROJECT_ID}
 CASSANDRA_VERSION?=3.11.0
 CASSANDRA_HOST_IP?=$(strip $(shell ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p'|tail -n 1|awk '{print $1}'))
