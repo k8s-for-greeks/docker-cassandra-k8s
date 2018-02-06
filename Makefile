@@ -24,7 +24,7 @@ docker:
 	docker build --compress --squash --build-arg "CASSANDRA_VERSION=${CASSANDRA_VERSION}" -t ${PROJECT}/cassandra:${VERSION} .
 
 docker-dev:
-	docker build --pull --build-arg "CASSANDRA_VERSION=${CASSANDRA_VERSION} DEV_CONTAINER=1" -t ${PROJECT}/cassandra:${VERSION}-dev .
+	docker build --pull --build-arg "CASSANDRA_VERSION=${CASSANDRA_VERSION}" --build-arg "DEV_CONTAINER=1" -t ${PROJECT}/cassandra:${VERSION}-dev .
 
 docker-cached:
 	docker build --compress --squash --build-arg "CASSANDRA_VERSION=${CASSANDRA_VERSION}" -t ${PROJECT}/cassandra:${VERSION} .
