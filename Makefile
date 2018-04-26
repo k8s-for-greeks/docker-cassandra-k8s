@@ -13,7 +13,7 @@
 # limitations under the License.
 
 VERSION?=3.11.1
-PROJECT_ID?=cassandra
+PROJECT_ID?=k8s-for-greeks
 PROJECT?=gcr.io/${PROJECT_ID}
 CASSANDRA_VERSION?=3.11.1
 CASSANDRA_HOST_IP?=$(strip $(shell ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p'|tail -n 1|awk '{print $1}'))
