@@ -1,4 +1,4 @@
-# Copyright 2017 K8s For Greeks / Vorstella
+# Copyright 2018 K8s For Greeks
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -33,8 +33,8 @@ ENV \
     CASSANDRA_CONF=/etc/cassandra \
     CASSANDRA_DATA=/var/lib/cassandra \
     CASSANDRA_LOGS=/var/log/cassandra \
-    CASSANDRA_RELEASE=3.11.0 \
-    CASSANDRA_SHA=d597b99b402bd2cf925033519db9e58340acb893fd83d600d904ba4041d44fa7 \
+    CASSANDRA_RELEASE=3.11.1 \
+    CASSANDRA_SHA=6feed696759e2f3219e0ebde13f4c9080cac0744a77eb3cb43af136ab527f0ed \
     JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 \
     DI_VERSION=1.2.0 \
     DI_SHA=81231da1cd074fdc81af62789fead8641ef3f24b6b07366a1c34e5b059faf363 \
@@ -104,40 +104,41 @@ RUN \
         /usr/share/doc/ \
         /usr/share/doc-base/ \
         /usr/share/man/ \
-        /tmp/* \
-        /usr/lib/jvm/java-8-openjdk-amd64/jre/plugin \
-        /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/javaws \
-        /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/jjs \
-        /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/orbd \
-        /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/pack200 \
-        /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/policytool \
-        /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/rmid \
-        /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/rmiregistry \
-        /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/servertool \
-        /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/tnameserv \
-        /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/unpack200 \
-        /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/javaws.jar \
-        /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/deploy* \
-        /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/desktop \
-        /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/*javafx* \
-        /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/*jfx* \
-        /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libdecora_sse.so \
-        /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libprism_*.so \
-        /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libfxplugins.so \
-        /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libglass.so \
-        /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libgstreamer-lite.so \
-        /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libjavafx*.so \
-        /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libjfx*.so \
-        /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/jfxrt.jar \
-        /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/nashorn.jar \
-        /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/oblique-fonts \
-        /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/plugin.jar \
-        /usr/lib/jvm/java-8-openjdk-amd64/jre/man \
-        /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/images \
-        /usr/lib/jvm/java-8-openjdk-amd64/man \
-        /usr/lib/jvm/java-8-openjdk-amd64/jre/THIRD_PARTY_README \
-        /usr/lib/jvm/java-8-openjdk-amd64/jre/ASSEMBLY_EXCEPTION
-
+        /tmp/* 
+#\
+#        /usr/lib/jvm/java-8-openjdk-amd64/jre/plugin \
+#        /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/javaws \
+#        /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/jjs \
+#        /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/orbd \
+#        /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/pack200 \
+#        /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/policytool \
+#        /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/rmid \
+#        /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/rmiregistry \
+#        /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/servertool \
+#        /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/tnameserv \
+#        /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/unpack200 \
+#        /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/javaws.jar \
+#        /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/deploy* \
+#        /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/desktop \
+#        /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/*javafx* \
+#        /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/*jfx* \
+#        /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libdecora_sse.so \
+#        /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libprism_*.so \
+#        /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libfxplugins.so \
+#        /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libglass.so \
+#        /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libgstreamer-lite.so \
+#        /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libjavafx*.so \
+#        /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libjfx*.so \
+#        /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/jfxrt.jar \
+#        /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/nashorn.jar \
+#        /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/oblique-fonts \
+#        /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/plugin.jar \
+#        /usr/lib/jvm/java-8-openjdk-amd64/jre/man \
+#        /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/images \
+#        /usr/lib/jvm/java-8-openjdk-amd64/man \
+#        /usr/lib/jvm/java-8-openjdk-amd64/jre/THIRD_PARTY_README \
+#        /usr/lib/jvm/java-8-openjdk-amd64/jre/ASSEMBLY_EXCEPTION
+#
 VOLUME ["/var/lib/cassandra"]
 
 # 1234: prometheus jmx_exporter

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright 2017 K8S For Greeks / Vorstella
+# Copyright 2018 K8S For Greeks
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
