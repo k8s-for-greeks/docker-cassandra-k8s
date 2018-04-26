@@ -35,8 +35,9 @@ build-dev: docker-dev
 
 build-cached: docker-cached
 
-push: build
-	docker push ${PROJECT}/cassandra:${VERSION}
+push: build build-dev
+	gcloud docker -- push ${PROJECT}/cassandra:${VERSION}
+	gcloud docker -- push ${PROJECT}/cassandra:${VERSION}-dev
 
 run: build-cached
 	docker run -i -t --rm \
