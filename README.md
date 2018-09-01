@@ -1,5 +1,7 @@
 # Cassandra K8s
 
+This project is no longer maintained, and has moved. Please see here: https://github.com/GoogleCloudPlatform/gke-stateful-applications-demo
+
 This project provides a container optimized to run Apache Cassandra on Kubernetes.  This project provides both a 
 production grade container, and a developer container for using cqlsh.
 
